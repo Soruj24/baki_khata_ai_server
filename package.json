@@ -1,0 +1,37 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^6.4.1",
+    "@langchain/core": "^1.1.48",
+    "axios": "^1.16.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "mongoose": "^9.6.2",
+    "node-cron": "^4.2.1",
+    "nodemon": "^3.1.14",
+    "openai": "^6.39.0",
+    "twilio": "^6.0.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.1",
+    "@types/node-cron": "^3.0.11",
+    "@types/nodemon": "^1.19.6",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
+  }
+}
