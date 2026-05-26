@@ -1,9 +1,9 @@
 import http from "http";
 import { Server } from "socket.io";
-import app from "./app.js";
+import app from "./app.ts";
 
 const PORT = process.env.PORT || 5000;
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
 const server = http.createServer(app);
 
@@ -18,7 +18,7 @@ export const io = new Server(server, {
   pingInterval: 25000,
 });
 
-// সকেট কানেকশন হ্যান্ডেলিং
+//  Socket.IO connection handler
 io.on("connection", (socket) => {
   console.log(`🔗 New Socket Connected: ${socket.id}`);
 
