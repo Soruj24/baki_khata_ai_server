@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { mongoUri } from "../secret.js";
+import { mongoUri } from "../secret.ts";
 
 export const connectDatabase = async (): Promise<void> => {
   try {

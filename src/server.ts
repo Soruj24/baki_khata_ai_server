@@ -1,6 +1,7 @@
 import http from "http";
 import { Server } from "socket.io";
 import app from "./app.ts";
+import { connectDatabase } from "./config/db.ts";
 
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
@@ -38,12 +39,6 @@ io.on("connection", (socket) => {
     console.log(`🔌 Socket Disconnected: ${socket.id}`);
   });
 });
-
-//  Database connection function
-const connectDatabase = async () => {
-  console.log("💾 Database connection initialized...");
-  // return mongoose.connect(process.env.MONGO_URI!);
-};
 
 //  Server startup function
 const startServer = async () => {
