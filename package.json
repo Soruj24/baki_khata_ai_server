@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.ts"
+    "start": "tsx watch src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,7 @@
   "type": "module",
   "dependencies": {
     "@google-cloud/text-to-speech": "^6.4.1",
+    "@hookform/resolvers": "^5.4.0",
     "@langchain/core": "^1.1.48",
     "axios": "^1.16.1",
     "bcryptjs": "^3.0.3",
@@ -20,6 +21,7 @@
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "date-fns": "^4.3.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-mongo-sanitize": "^2.2.0",
@@ -35,9 +37,13 @@
     "nodemon": "^3.1.14",
     "openai": "^6.39.0",
     "qrcode": "^1.5.4",
+    "react-hook-form": "^7.76.1",
+    "recharts": "^3.8.1",
     "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "speakeasy": "^2.0.0",
-    "twilio": "^6.0.2"
+    "twilio": "^6.0.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",

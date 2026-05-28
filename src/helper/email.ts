@@ -45,15 +45,6 @@ const transporter = nodemailer.createTransport({
     rateLimit: 5,
 });
 
-// Verify transporter configuration
-transporter.verify((error, success) => {
-    if (error) {
-        console.error("SMTP configuration error:", error);
-    } else {
-        console.log("SMTP server is ready to take messages");
-    }
-});
-
 export const sendEmail = async (emailData: EmailData): Promise<EmailResult> => {
     try {
         validateConfig();

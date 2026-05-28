@@ -1,16 +1,8 @@
 // models/utils/ValidationHelpers.ts
 import validator from "validator";
-import { USER_CONSTANTS } from "../models/constants/UserConstants.ts";
-import { isStrongPassword } from "../models/utils/UserUtils.ts";
+import { isStrongPassword } from "./UserUtils.js";
 
 export const ValidationHelpers = {
-  isValidUsername: (username: string): boolean => {
-    return username.length >= USER_CONSTANTS.USERNAME.MIN_LENGTH &&
-      username.length <= USER_CONSTANTS.USERNAME.MAX_LENGTH &&
-      /^[a-zA-Z0-9_.-]+$/.test(username) &&
-      !USER_CONSTANTS.USERNAME.RESERVED.includes(username.toLowerCase() as any);
-  },
-
   isStrongPassword: (password: string): boolean => {
     return isStrongPassword(password);
   },
@@ -24,16 +16,8 @@ export const ValidationHelpers = {
   validateProfileData: (profileData: any): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
-    if (profileData.firstName && profileData.firstName.length > USER_CONSTANTS.LIMITS.NAME_MAX_LENGTH) {
-      errors.push(`First name cannot exceed ${USER_CONSTANTS.LIMITS.NAME_MAX_LENGTH} characters`);
-    }
-
-    if (profileData.lastName && profileData.lastName.length > USER_CONSTANTS.LIMITS.NAME_MAX_LENGTH) {
-      errors.push(`Last name cannot exceed ${USER_CONSTANTS.LIMITS.NAME_MAX_LENGTH} characters`);
-    }
-
-    if (profileData.bio && profileData.bio.length > USER_CONSTANTS.LIMITS.BIO_MAX_LENGTH) {
-      errors.push(`Bio cannot exceed ${USER_CONSTANTS.LIMITS.BIO_MAX_LENGTH} characters`);
+    if (profileData.bio && profileData.bio.length > 500) {
+      errors.push(`Bio cannot exceed 500 characters`);
     }
 
     if (profileData.website && !validator.isURL(profileData.website)) {

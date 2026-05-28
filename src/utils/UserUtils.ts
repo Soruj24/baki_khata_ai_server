@@ -1,7 +1,4 @@
-// models/utils/UserUtils.ts
 import crypto from "crypto";
-import validator from "validator";
-import { USER_CONSTANTS } from "../models/constants/UserConstants.ts";
 
 export const generateSecureToken = (): string => {
   return crypto.randomBytes(32).toString('hex');
@@ -12,13 +9,12 @@ export const hashToken = (token: string): string => {
 };
 
 export const isStrongPassword = (password: string): boolean => {
-  const minLength = 8;
+  const minLength = 6;
   const hasUpperCase = /[A-Z]/.test(password);
   const hasLowerCase = /[a-z]/.test(password);
   const hasNumbers = /\d/.test(password);
-  const hasNonalphas = /\W/.test(password);
 
-  return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasNonalphas;
+  return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers;
 };
 
 export const sanitizeUserAgent = (userAgent: string): string => {

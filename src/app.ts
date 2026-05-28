@@ -9,13 +9,14 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import mongoSanitize from "express-mongo-sanitize";
-import hpp from "hpp";
 import morgan from "morgan";
+import hpp from "hpp";
 import cookieParser from "cookie-parser";
 import createError, { HttpError } from "http-errors";
+import shopkeeperRouter from "./router/customerRouter.ts";
+import authRouter from "./router/authRouter.ts";
 
-//  Environment variables
+// Environment variables
 const NODE_ENV = process.env.NODE_ENV || "development";
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
@@ -23,7 +24,7 @@ const app = express();
 
 app.use(cookieParser());
 
-//  Personal CORS configuration
+// Personal CORS configuration
 const allowedOrigins = [CLIENT_URL, "http://localhost:3000"];
 
 app.use(
@@ -31,7 +32,7 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
 
-      //  Allow localhost requests in development mode
+      // Allow localhost requests in development mode
       if (
         NODE_ENV !== "production" &&
         (origin.includes("localhost") || origin.includes("127.0.0.1"))
@@ -67,12 +68,12 @@ app.use(
   }),
 );
 
-//  Reverse Proxy (Nginx/Heroku/Render) setup
+// Reverse Proxy (Nginx/Heroku/Render) setup
 if (NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
 
-//  Helmet security middleware
+// Helmet security middleware
 app.use(
   helmet({
     ...(NODE_ENV !== "production" && { contentSecurityPolicy: false }),
@@ -87,13 +88,40 @@ app.use(compression());
 
 app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
 
-//  NoSQL injection protection middleware
-app.use(mongoSanitize());
 
-//  HTTP Parameter Pollution protection middleware
+const mongoSanitize = (req: Request, _res: Response, next: NextFunction) => {
+  const sanitize = (obj: unknown): unknown => {
+    if (typeof obj === "string") {
+      return obj.replace(/\$|\./g, "");
+    }
+    if (Array.isArray(obj)) {
+      return obj.map((item) => sanitize(item));
+    }
+    if (obj && typeof obj === "object") {
+      const sanitized: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(
+        obj as Record<string, unknown>,
+      )) {
+        sanitized[key.replace(/\$/g, "").replace(/\./g, "")] = sanitize(value);
+      }
+      return sanitized;
+    }
+    return obj;
+  };
+  if (req.body) req.body = sanitize(req.body);
+  if (req.params) {
+    for (const key of Object.keys(req.params)) {
+      req.params[key] = sanitize(req.params[key]) as string;
+    }
+  }
+  next();
+};
+app.use(mongoSanitize);
+
+// HTTP Parameter Pollution protection middleware
 app.use(hpp());
 
-//  Rate Limiting middleware
+// Rate Limiting middleware
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: NODE_ENV === "production" ? 100 : 1000,
@@ -113,12 +141,12 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-//  Route-specific rate limiting middleware
-app.use("/api/", limiter);
-app.use("/api/auth/login", authLimiter);
-app.use("/api/auth/register", authLimiter);
+// Apply rate limiters to specific routes
+app.use("/api/auth", authLimiter);
+app.use("/api/shopkeeper", limiter);
+app.use("/api/customers", limiter);
 
-//  Health Check middleware
+// Health Check middleware
 app.get("/api/health", (req: Request, res: Response) => {
   res.status(200).json({
     status: "OK",
@@ -128,19 +156,21 @@ app.get("/api/health", (req: Request, res: Response) => {
   });
 });
 
-//  API Routes middleware
-// app.use("/api/auth", authRouter);
+// API Routes middleware
+app.use("/api/auth", authRouter);
+app.use("/api/shopkeeper", shopkeeperRouter);
+app.use("/api/customers", shopkeeperRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Server is running", environment: NODE_ENV });
 });
 
-//  Global Error Handler middleware
+// 404 handler - Route not found
 app.use((req: Request, res: Response, next: NextFunction) => {
   next(createError(404, `Route ${req.originalUrl} not found`));
 });
 
-//  Global Error Handler middleware
+// Global Error Handler middleware
 const errorHandler: ErrorRequestHandler = (
   err: HttpError,
   req: Request,
@@ -152,10 +182,10 @@ const errorHandler: ErrorRequestHandler = (
 
   if (NODE_ENV !== "test") {
     console.error(`❌ Error ${statusCode}: ${err.message}`);
-    if (isDevelopment) console.error(err.stack);
+    if (isDevelopment && statusCode >= 500) console.error(err.stack);
   }
 
-  //  Response format
+  // Response format
   res.status(statusCode).json({
     success: false,
     statusCode,

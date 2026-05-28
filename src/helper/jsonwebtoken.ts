@@ -62,7 +62,7 @@ export const verifyJSONWebToken = (
       ...decoded,
       id: decoded.id || decoded.userId, // Use id if present, otherwise fallback to userId
       email: decoded.email || "",
-      role: decoded.role || "user",
+      role: decoded.role || "shopkeeper",
     };
 
     return normalizedPayload;

@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 
 export interface UserData {
-  username: string;
+  storeName: string;
   userLanguage: string;
   language: string;
   socketId: string;
@@ -19,32 +19,32 @@ export interface ConnectedUsers {
 }
 
 export interface JoinData {
-  username: string;
+  storeName: string;
   userLanguage: string;
   rememberSession?: boolean;
 }
 
 export interface RestoreSessionData {
-  username: string;
+  storeName: string;
   force?: boolean;
 }
 
 export interface AutoJoinData {
   force?: boolean;
-  username?: string;
+  storeName?: string;
 }
 
 export interface ConnectionCheckResponse {
   connected: boolean;
   authenticated: boolean;
-  username?: string;
+  storeName?: string;
   timestamp: string;
 }
 
 export interface JoinSuccessData {
   message: string;
   users: Array<{
-    username: string;
+    storeName: string;
     userLanguage: string;
   }>;
   groups: any[];
@@ -69,7 +69,7 @@ export interface JoinErrorData {
 }
 
 export interface UserOnlineData {
-  username: string;
+  storeName: string;
   userLanguage?: string;
   autoJoined?: boolean;
   manuallyJoined?: boolean;
@@ -77,7 +77,7 @@ export interface UserOnlineData {
 }
 
 export interface UserOfflineData {
-  username: string;
+  storeName: string;
   reason?: string;
 }
 
@@ -87,7 +87,7 @@ export interface MultipleSessionWarningData {
 }
 
 export interface AutoJoinSuccessData {
-  username: string;
+  storeName: string;
   userLanguage: string;
   message: string;
   autoJoined?: boolean;
@@ -135,7 +135,7 @@ export interface MarkAsReadData {
 }
 
 export interface UserTypingData {
-  username: string;
+  storeName: string;
   typing: boolean;
 }
 
@@ -165,7 +165,7 @@ export interface NewMessageData {
   type: 'text' | 'voice' | 'image' | 'file';
   timestamp: Date;
   readBy?: Array<{
-    username: string;
+    storeName: string;
     readAt: Date;
   }>;
   deliveredTo?: string[];
